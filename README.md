@@ -1,9 +1,11 @@
 # SRI_2022
 Summer Research Institute (SRI) 2022 Summer Camp
 
-**CS Group**: Dockerization in Computer Science
+**Computer Science Group**: Docker
 
 All the Summer Class Leaerning Materials
+- resume web site
+
 
 Tianyu Wang
 

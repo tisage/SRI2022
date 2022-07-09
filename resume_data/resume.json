@@ -45,7 +45,7 @@
       "highlights": [
         "Machine Learning",
         "Data Engineering",
-        "Network Engineering",
+        "Network Engineering"
       ]
     },
     {
@@ -117,7 +117,7 @@
       "startDate": "2006-09",
       "endDate": "20010-06",
       "studyType": "Bachelor"
-    },
+    }
   ],
   "skills": [
     {
@@ -125,7 +125,7 @@
       "keywords": [
         "TensorFlow",
         "Scikit-learn",
-        "PyTorch",
+        "PyTorch"
       ]
     },
     {
@@ -155,35 +155,21 @@
       "name": "Langages",
       "keywords": [
         "Python",
-        "JAVA",
+        "JAVA"
       ]
     }
   ],
   "interests": [
     {
-      "name": "Music",
+      "name": "Hobby",
       "summary": "",
       "keywords": [
         "Piano",
-        "Guitar"
+        "Guitar",
+        "Swimming"
       ]
-    },
-    {
-      "name": "Sustainable development"
-    },
-    {
-      "name": "Rugby",
-      "summary": ""
-    },
-    {
-      "name": "Live concert"
-    },
-    {
-      "name": "Architecture"
-    },
-    {
-      "name": "Museum/Art"
     }
+
   ],
   "languages": [
     {
@@ -195,7 +181,7 @@
       "language": "Mandarin",
       "level": "Native",
       "fluency": "Native"
-    },
+    }
 
   ]
 }

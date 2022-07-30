@@ -1,0 +1,20 @@
+version: "3"
+services:
+  music-player:
+    image: tisage/mplayer:v1
+    ports:
+      - "8000:4533"
+    restart: unless-stopped
+    environment:
+      ND_SCANSCHEDULE: "@every 1h"
+      ND_LOGLEVEL: "info"
+      ND_UIWELCOMEMESSAGE: "Welcome SRI 2022 CS Group!"
+      ND_DEFAULTTHEME: "Spotify-ish"
+      ND_ENABLECOVERANIMATION: "true"
+      ND_ENABLEDOWNLOADS: "false"
+      ND_SESSIONTIMEOUT: "24h"
+      ND_UILOGINBACKGROUNDURL: "https://raw.githubusercontent.com/tisage/SRI_2022/main/media_sample/SRI_2022_CS.jpg"
+      # ND_BASEURL: ""
+    volumes:
+      - "~/mplayer/data:/data"
+      - "~/mplayer/music:/music"

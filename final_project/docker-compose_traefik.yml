@@ -1,5 +1,6 @@
 version: '3.7'
-
+# 8/1/2022 dev
+# ssl supports
 services:
   traefik:
     image: traefik:v2.5.2
@@ -12,10 +13,10 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file=true"
       - "--providers.file.watch=true"
-      - "--providers.file.filename=/etc/traefik/rules.toml"
+      #- "--providers.file.filename=/etc/traefik/rules.toml"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.ssh.address=:22"
+      #- "--entrypoints.ssh.address=:22"
       #- "--entrypoints.hkps.address=:11371"
       - "--entryPoints.web.forwardedHeaders.insecure"
       - "--entryPoints.websecure.forwardedHeaders.insecure"
@@ -45,24 +46,20 @@ services:
       - "8080:8080"
       #- "11371:11371"
     volumes:
-      - "/mnt/data/services/traefik/rules.toml:/etc/traefik/rules.toml"
-      - "/mnt/data/traefik/letsencrypt:/letsencrypt"
+      - "~/traefik/rules.toml:/etc/traefik/rules.toml"
+      - "~/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     extra_hosts:
       - host.docker.internal:192.81.214.162
 
   navidrome:
-    # 01-22-2022
     image: tisage/mplayer:v1
     environment:
-      ND_PORT: 4533
       ND_SCANSCHEDULE: '@every 1m'
       ND_COVERJPEGQUALITY: 85
       ND_TRANSCODINGCACHESIZE: "500MB"
       ND_LOGLEVEL: 'info'
-      # enable things we want
       ND_ENABLEDOWNLOADS: 'false'
-      # disable for performance fix
       ND_DEVACTIVITYPANEL: 'false'
       ND_AUTOIMPORTPLAYLISTS: 'false'
       ND_ENABLEGRAVATAR: 'false'
@@ -70,7 +67,8 @@ services:
       ND_LASTFM_ENABLED: 'false'
       # disable for security
       ND_ENABLETRANSCODINGCONFIG: 'false'
-      ND_UIWELCOMEMESSAGE: "Welcome SRI 2022 CS Project!"
+      # Customize a little bit
+      ND_UIWELCOMEMESSAGE: "Welcome to SRI 2022 CS Project!"
       ND_UILOGINBACKGROUNDURL: "https://raw.githubusercontent.com/tisage/SRI_2022/main/media_sample/SRI_2022_CS.jpg"
 
     ports:

@@ -26,7 +26,7 @@ services:
   music-player:
     image: tisage/mplayer:v1
     ports:
-      - "4533:4533"
+      - "80:4533"
     restart: unless-stopped
     environment:
       ND_SCANSCHEDULE: "@every 1h"
@@ -42,3 +42,7 @@ services:
       - "~/mplayer/data:/data"
       - "~/mplayer/music:/music:ro"
     read_only: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`sri2022cs.com`)"
+      - "traefik.http.routers.whoami.entrypoints=web"

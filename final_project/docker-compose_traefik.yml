@@ -1,48 +1,88 @@
-version: "3"
-services:
-  reverse-proxy:
-    # The official v2 Traefik docker image
-    image: traefik:v2.8
-    # Enables the web UI and tells Traefik to listen to docker
-    command: 
-      - --api.insecure=true --providers.docker
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --providers.docker=true
-      - --providers.file.directory=/etc/traefik/dynamic_conf
-    ports:
-      # The HTTP port
-      - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
-      - "~/certs:/tools/certs"
-      - ./tools/traefik/config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+version: '3.7'
 
+services:
+  traefik:
+    image: traefik:v2.5.2
+    container_name: "traefik"
     restart: unless-stopped
-    
-  music-player:
-    image: tisage/mplayer:v1
-    ports:
-      - "80:4533"
-    restart: unless-stopped
-    environment:
-      ND_SCANSCHEDULE: "@every 1h"
-      ND_LOGLEVEL: "info"
-      ND_UIWELCOMEMESSAGE: "Welcome to SRI 2022 CS Project!"
-      ND_DEFAULTTHEME: "Spotify-ish"
-      ND_ENABLECOVERANIMATION: "true"
-      ND_ENABLEDOWNLOADS: "false"
-      ND_SESSIONTIMEOUT: "24h"
-      ND_UILOGINBACKGROUNDURL: "https://raw.githubusercontent.com/tisage/SRI_2022/main/media_sample/SRI_2022_CS.jpg"
-      # ND_BASEURL: ""
-    volumes:
-      - "~/mplayer/data:/data"
-      - "~/mplayer/music:/music:ro"
-    read_only: true
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file=true"
+      - "--providers.file.watch=true"
+      - "--providers.file.filename=/etc/traefik/rules.toml"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.ssh.address=:22"
+      #- "--entrypoints.hkps.address=:11371"
+      - "--entryPoints.web.forwardedHeaders.insecure"
+      - "--entryPoints.websecure.forwardedHeaders.insecure"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      #- "--certificatesresolvers.myresolver.acme.email=admin@andrewzah.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`sri2022cs.com`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redir.redirectScheme.scheme=https"
+
+        #- "traefik.http.routers.bluemap.rule=Host(`fabric.genessee.zah.rocks`)"
+        #- "traefik.http.routers.bluemap.entrypoints=websecure"
+        #- "traefik.http.routers.bluemap.tls.certresolver=myresolver"
+        #- "traefik.http.services.bluemap.loadbalancer.server.url=http://192.168.1.16"
+        #- "traefik.http.services.bluemap.loadbalancer.server.port=8100"
+    ports:
+      #- "22:22"
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      #- "11371:11371"
+    volumes:
+      - "/mnt/data/services/traefik/rules.toml:/etc/traefik/rules.toml"
+      - "/mnt/data/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    extra_hosts:
+      - host.docker.internal:192.81.214.162
+
+  navidrome:
+    # 01-22-2022
+    image: tisage/mplayer:v1
+    environment:
+      ND_PORT: 4533
+      ND_SCANSCHEDULE: '@every 1m'
+      ND_COVERJPEGQUALITY: 85
+      ND_TRANSCODINGCACHESIZE: "500MB"
+      ND_LOGLEVEL: 'info'
+      # enable things we want
+      ND_ENABLEDOWNLOADS: 'false'
+      # disable for performance fix
+      ND_DEVACTIVITYPANEL: 'false'
+      ND_AUTOIMPORTPLAYLISTS: 'false'
+      ND_ENABLEGRAVATAR: 'false'
+      ND_ENABLESTARRATING: 'false'
+      ND_LASTFM_ENABLED: 'false'
+      # disable for security
+      ND_ENABLETRANSCODINGCONFIG: 'false'
+      ND_UIWELCOMEMESSAGE: "Welcome SRI 2022 CS Project!"
+      ND_UILOGINBACKGROUNDURL: "https://raw.githubusercontent.com/tisage/SRI_2022/main/media_sample/SRI_2022_CS.jpg"
+
+    ports:
+        - "4533"
+    volumes:
+      - "~/mplayer/data:/data"
+      - "~/mplayer/music:/music"
+    restart: unless-stopped
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.navidrome.rule=Host(`sri2022cs.com`)"
+      - "traefik.http.routers.navidrome.entrypoints=websecure"
+      - "traefik.http.routers.navidrome.tls.certresolver=myresolver"

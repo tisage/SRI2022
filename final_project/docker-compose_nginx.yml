@@ -41,8 +41,6 @@ services:
       ND_SESSIONTIMEOUT: "24h"
       ND_UILOGINBACKGROUNDURL: "https://raw.githubusercontent.com/tisage/SRI_2022/main/media_sample/SRI_2022_CS.jpg"
       # ND_BASEURL: ""
-      - VIRTUAL_HOST=sri2022cs.com
-      - LETSENCRYPT_HOST=sri2022cs.com
     volumes:
       - "~/mplayer/data:/data"
       - "~/mplayer/music:/music:ro"

@@ -4,7 +4,12 @@ services:
     # The official v2 Traefik docker image
     image: traefik:v2.8
     # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
+    command: 
+      - --api.insecure=true --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.docker=true
+      - --providers.file.directory=/etc/traefik/dynamic_conf
     ports:
       # The HTTP port
       - "80:80"
@@ -13,6 +18,9 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      - "~/certs:/tools/certs"
+      - ./tools/traefik/config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+
     restart: unless-stopped
     
   music-player:

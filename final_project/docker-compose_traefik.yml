@@ -2,6 +2,7 @@ version: '3.7'
 # 8/2/2022 dev
 # ssl supports
 # redirect www to non-www
+# several tuning
 
 services:
   traefik:
@@ -37,7 +38,7 @@ services:
       - "traefik.http.middlewares.redir.redirectScheme.scheme=https"
       #- "traefik.http.routers.navidrome-app.middlewares=redirect-to-nonwww"
 
-        #- "traefik.http.routers.bluemap.rule=Host(`fabric.genessee.zah.rocks`)"
+        #- "traefik.http.routers.bluemap.rule=Host(`sri2022cs.com`)"
         #- "traefik.http.routers.bluemap.entrypoints=websecure"
         #- "traefik.http.routers.bluemap.tls.certresolver=myresolver"
         #- "traefik.http.services.bluemap.loadbalancer.server.url=http://192.168.1.16"
@@ -53,23 +54,25 @@ services:
       - "~/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     extra_hosts:
-      - host.docker.internal:192.81.214.162
+      - host.docker.internal:172.17.0.1
 
   navidrome:
     image: tisage/mplayer:v1
     environment:
-      ND_SCANSCHEDULE: '@every 1m'
-      ND_COVERJPEGQUALITY: 85
+      ND_SCANSCHEDULE: '@every 1h'
+      # ND_COVERJPEGQUALITY: 85
       ND_TRANSCODINGCACHESIZE: "500MB"
       ND_LOGLEVEL: 'info'
       ND_ENABLEDOWNLOADS: 'false'
       ND_DEVACTIVITYPANEL: 'false'
       ND_AUTOIMPORTPLAYLISTS: 'false'
       ND_ENABLEGRAVATAR: 'false'
-      ND_ENABLESTARRATING: 'false'
+      ND_ENABLESTARRATING: 'true'
       ND_LASTFM_ENABLED: 'false'
+      ND_ENABLECOVERANIMATION: "true"
       # disable for security
       ND_ENABLETRANSCODINGCONFIG: 'false'
+      ND_SESSIONTIMEOUT: "24h"
       # Customize a little bit
       ND_UIWELCOMEMESSAGE: "Welcome to SRI 2022 CS Project!"
       ND_UILOGINBACKGROUNDURL: "https://raw.githubusercontent.com/tisage/SRI_2022/main/media_sample/SRI_2022_CS.jpg"
@@ -84,7 +87,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.navidrome.rule=Host(`sri2022cs.com`)"
+      #- "traefik.http.routers.navidrome.rule=Host(`sri2022cs.com`)"
       - "traefik.http.routers.navidrome.rule=Host(`sri2022cs.com`) || Host(`www.sri2022cs.com`)"
       - "traefik.http.routers.navidrome.entrypoints=websecure"
       - "traefik.http.routers.navidrome.tls.certresolver=myresolver"

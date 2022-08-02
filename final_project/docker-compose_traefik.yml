@@ -1,6 +1,8 @@
 version: '3.7'
-# 8/1/2022 dev
+# 8/2/2022 dev
 # ssl supports
+# redirect www to non-www
+
 services:
   traefik:
     image: traefik:v2.5.2
@@ -33,6 +35,7 @@ services:
       - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redir.redirectScheme.scheme=https"
+      #- "traefik.http.routers.navidrome-app.middlewares=redirect-to-nonwww"
 
         #- "traefik.http.routers.bluemap.rule=Host(`fabric.genessee.zah.rocks`)"
         #- "traefik.http.routers.bluemap.entrypoints=websecure"
@@ -82,5 +85,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.navidrome.rule=Host(`sri2022cs.com`)"
+      - "traefik.http.routers.navidrome.rule=Host(`sri2022cs.com`) || Host(`www.sri2022cs.com`)"
       - "traefik.http.routers.navidrome.entrypoints=websecure"
       - "traefik.http.routers.navidrome.tls.certresolver=myresolver"

@@ -13,7 +13,7 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--providers.file=true"
       - "--providers.file.watch=true"
-      #- "--providers.file.filename=/etc/traefik/rules.toml"
+      - "--providers.file.filename=/etc/traefik/rules.toml"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       #- "--entrypoints.ssh.address=:22"
@@ -46,7 +46,7 @@ services:
       - "8080:8080"
       #- "11371:11371"
     volumes:
-      - "~/traefik/rules.toml:/etc/traefik/rules.toml"
+      - "~/traefik:/etc/traefik/"
       - "~/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     extra_hosts:

@@ -3,12 +3,12 @@ services:
   music-player:
     image: tisage/mplayer:v1
     ports:
-      - "443:4533"
+      - "80:4533"
     restart: unless-stopped
     environment:
-      ND_SCANSCHEDULE: "@every 1h"
+      ND_SCANSCHEDULE: "@every 5m"
       ND_LOGLEVEL: "info"
-      ND_UIWELCOMEMESSAGE: "Welcome SRI 2022 CS Project!"
+      ND_UIWELCOMEMESSAGE: "Welcome to SRI 2022 CS Project!"
       ND_DEFAULTTHEME: "Spotify-ish"
       ND_ENABLECOVERANIMATION: "true"
       ND_ENABLEDOWNLOADS: "false"

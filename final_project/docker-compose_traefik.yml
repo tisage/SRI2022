@@ -47,7 +47,7 @@ services:
       #- "22:22"
       - "80:80"
       - "443:443"
-      - "8080:8080"
+      #- "8080:8080"
       #- "11371:11371"
     volumes:
       - "~/traefik:/etc/traefik/"
@@ -59,12 +59,12 @@ services:
   navidrome:
     image: tisage/mplayer:v1
     environment:
-      ND_SCANSCHEDULE: '@every 1h'
+      ND_SCANSCHEDULE: '@every 5M'
       # ND_COVERJPEGQUALITY: 85
       ND_TRANSCODINGCACHESIZE: "500MB"
       ND_LOGLEVEL: 'info'
       ND_ENABLEDOWNLOADS: 'false'
-      ND_DEVACTIVITYPANEL: 'false'
+      ND_DEVACTIVITYPANEL: 'true'
       ND_AUTOIMPORTPLAYLISTS: 'false'
       ND_ENABLEGRAVATAR: 'false'
       ND_ENABLESTARRATING: 'true'
